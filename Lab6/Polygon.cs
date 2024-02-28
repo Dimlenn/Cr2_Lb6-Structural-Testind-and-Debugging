@@ -8,9 +8,10 @@ namespace Lab6
 {
     public class Polygon
     {
-        private List<Point> vertices = new List<Point>();
+        private List<Point> vertices;
         public Polygon(Point[] points)
         {
+            vertices = new List<Point>();
             foreach (Point p in points)
             {
                 vertices.Add(p);
@@ -22,13 +23,10 @@ namespace Lab6
             var firstPoint = vertices.Last();
             var secondPoint = vertices.First();
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (int i = 0; i < vertices.Count - 1; i++)
             {
                 if (!Check(firstPoint, secondPoint))
                     return false;
-
-                if (i == (vertices.Count - 1))
-                    break;
 
                 firstPoint = vertices[i];
                 secondPoint = vertices[i+1];
@@ -39,24 +37,30 @@ namespace Lab6
 
         private bool Check(Point firstPoint, Point secondPoint)
         {
+            // надо строить функцию и по ней проверять удовлетворяет прямой или нет
+            // если частное x/y = коэф, то точка принадлежит прямой, если x/y > коэф, то точка с одной стороны, если x/y < коэф, то точка с другой
+            List<Point> leftPoints = new List<Point>();
+            List<Point> rightPoints = new List<Point>();
+
             foreach (Point p in vertices)
             {
-                if (p.X <= firstPoint.X && p.X <= secondPoint.X)
+                if (p.X == firstPoint.X && p.Y == firstPoint.Y
+                   || p.X == secondPoint.X && p.Y == secondPoint.Y)
                     continue;
 
-                if (p.X >= firstPoint.X && p.X >= secondPoint.X)
-                    continue;
+                if (p.X <= firstPoint.X && p.X <= secondPoint.X
+                    || p.Y <= firstPoint.Y && p.Y <= secondPoint.Y)
+                    leftPoints.Add(p);
 
-                if (p.Y <= firstPoint.Y && p.Y <= secondPoint.Y)
-                    continue;
-
-                if (p.Y >= firstPoint.Y && p.Y >= secondPoint.Y)
-                    continue;
-
-                return false;
+                else
+                if (p.X >= firstPoint.X && p.X >= secondPoint.X
+                    || p.Y >= firstPoint.Y && p.Y >= secondPoint.Y)
+                    rightPoints.Add(p);
             }
-
-            return true;
+            if (leftPoints.Count == 0 || rightPoints.Count == 0)
+                return true;
+            else
+                return false;
         }
     }
 }
